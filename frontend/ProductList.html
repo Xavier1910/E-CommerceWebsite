@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeLane||Admin - Product List</title>
+    <link rel="stylesheet" href="./css/productList.css">
+    <link rel="icon" href="./assets/images/logo.png"  type="image/png">
+
+</head>
+<body>
+    <a id="AddProduct" href="AddProduct.html">Add Product</a>
+    <h2 id="headText">Admin - Product List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Preview</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Products will be dynamically inserted here -->
+        </tbody>
+    </table>
+    <div id="toast" class="toast"></div>
+
+    <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    fetchProducts();
+                });
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.style.backgroundColor = isSuccess ? "green" : "red";
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+
+function fetchProducts() {
+    fetch("http://localhost:8080/products") // Replace with your backend URL
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById("productTableBody");
+            tableBody.innerHTML = ""; // Clear existing data
+
+            data.forEach(product => {
+                let row = `<tr>
+                    <td>${product.id}</td>
+                    <td><img src="http://localhost:8080/products/files/${product.preview}" alt="Preview"></td>
+                    <td>${product.name}</td>
+                    <td>${product.brand}</td>
+                    <td>${product.category}</td>
+                    <td>₹${product.price}</td>
+                    <td><button onclick="deleteProduct(${product.id})">Delete</button></td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error fetching products:", error));
+}
+
+function deleteProduct(productId) {
+    if (confirm("Are you sure you want to delete this product?")) {
+        fetch(`http://localhost:8080/products/delete/${productId}`, {
+            method: "DELETE",
+        })
+        .then(response => {
+            if (response.ok) {
+                showToast("Product added successfully!", true);
+                setTimeout(() => {
+                    fetchProducts(); 
+                }, 1500);
+            }
+        }).catch(error => {
+                console.error("Error:", error);
+                showToast("Failed to add product!", false);
+        });
+    }
+}
+
+    </script>
+</body>
+</html>

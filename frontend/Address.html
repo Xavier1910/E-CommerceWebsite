@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeLane || Address</title>
+    <link rel="icon" href="./assets/images/logo.png"  type="image/png">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(234, 237, 237);
+
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            top: 100px;
+            left: 30%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 40%;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+        }
+
+        input,
+        select {
+            width: 98%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 100%;
+
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(3, 122, 122);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: rgb(1, 77, 77);
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin: auto;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 16px;
+            position: fixed;
+            top: 30px;
+            right: -20px;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            font-size: 16px;
+            z-index: 1;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {
+                top: 0;
+                opacity: 0;
+            }
+            to {
+                top: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                top: 30px;
+                opacity: 1;
+            }
+            to {
+                top: 0;
+                opacity: 0;
+            }
+        }
+        .AddFooter{
+            position: relative;
+            top: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="1"></div>
+    <script>
+        load("subHeader.html");
+        function load(url)
+        {
+            req = new XMLHttpRequest();
+            req.open("GET", url, false);
+            req.send(null);
+            document.getElementById(1).innerHTML = req.responseText;
+        }
+    </script>
+    <div class="container">
+        <h2>Address</h2>
+        <form id="addressForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Enter your full name" onkeyup="validateName()"
+                    onchange="validateName()">
+                <span class="error" id="nameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" onkeyup="validateEmail()"
+                    onchange="validateEmail()">
+                <span class="error" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="mobile">Mobile No</label>
+                <input type="tel" id="mobile" placeholder="Enter 10-digit mobile no" onkeyup="validateMobile()"
+                    onchange="validateMobile()">
+                <span class="error" id="mobileError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="flat">Flat No</label>
+                <input type="text" id="flat" placeholder="Flat/House No" onkeyup="validateFlat()"
+                    onchange="validateFlat()">
+                <span class="error" id="flatError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="street">Street Name</label>
+                <input type="text" id="street" placeholder="Street Name" onkeyup="validateStreet()"
+                    onchange="validateStreet()">
+                <span class="error" id="streetError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" placeholder="Enter your city" onkeyup="validateCity()"
+                    onchange="validateCity()">
+                <span class="error" id="cityError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="state">State</label>
+                <select id="state" onchange="validateState()">
+                    <option value="">Select State</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                </select>
+                <span class="error" id="stateError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="pincode">Pincode</label>
+                <input type="text" id="pincode" placeholder="Enter 6-digit pincode" onkeyup="validatePincode()"
+                    onchange="validatePincode()">
+                <span class="error" id="pincodeError"></span>
+            </div>
+            <button type="submit">Continue</button>
+        </form>
+        <div id="toast" class="toast"></div>
+    </div>
+    <script>
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.style.backgroundColor = isSuccess ? "green" : "red";
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
+    <script>
+        function showError(id, message) {
+            document.getElementById(id).innerText = message;
+        }
+        function clearError(id) {
+            document.getElementById(id).innerText = "";
+        }
+
+        function validateName() {
+            let name = document.getElementById("name").value.trim();
+            if (name === "") showError("nameError", "Name is required.");
+            else clearError("nameError");
+        }
+
+        function validateEmail() {
+            let email = document.getElementById("email").value.trim();
+            let emailPattern = /\S+@\S+\.\S+/;
+            if (email === "" || !emailPattern.test(email)) showError("emailError", "Valid email required.");
+            else clearError("emailError");
+        }
+
+        function validateMobile() {
+            let mobile = document.getElementById("mobile").value.trim();
+            let mobilePattern = /^[6-9]\d{9}$/;
+            if (mobile === "" || !mobilePattern.test(mobile)) showError("mobileError", "Enter a valid 10-digit mobile number.");
+            else clearError("mobileError");
+        }
+
+        function validateFlat() {
+            let flat = document.getElementById("flat").value.trim();
+            if (flat === "") showError("flatError", "Flat No is required.");
+            else clearError("flatError");
+        }
+
+        function validateStreet() {
+            let street = document.getElementById("street").value.trim();
+            if (street === "") showError("streetError", "Street Name is required.");
+            else clearError("streetError");
+        }
+
+        function validateCity() {
+            let city = document.getElementById("city").value.trim();
+            if (city === "") showError("cityError", "City is required.");
+            else clearError("cityError");
+        }
+
+        function validateState() {
+            let state = document.getElementById("state").value;
+            if (state === "") showError("stateError", "Please select a state.");
+            else clearError("stateError");
+        }
+
+        function validatePincode() {
+            let pincode = document.getElementById("pincode").value.trim();
+            let pincodePattern = /^\d{6}$/;
+            if (pincode === "" || !pincodePattern.test(pincode)) showError("pincodeError", "Enter a valid 6-digit pincode.");
+            else clearError("pincodeError");
+        }
+
+        const API_BASE_URL = "http://localhost:8080/addresses";
+        let userId = sessionStorage.getItem("userId");
+        console.log(userId);
+        
+        if (userId) {
+            fetch(`${API_BASE_URL}/user/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        console.log(data);
+                        
+                        document.getElementById("name").value = data.fullName || "";
+                        document.getElementById("email").value = data.email || "";
+                        document.getElementById("mobile").value = data.mobileNo || "";
+                        document.getElementById("flat").value = data.flatNo || "";
+                        document.getElementById("street").value = data.streetName || "";
+                        document.getElementById("city").value = data.city || "";
+                        document.getElementById("state").value = data.state || "";
+                        document.getElementById("pincode").value = data.pincode || "";
+                    }
+                })
+                .catch(error => console.error("Error fetching user address:", error));
+        }
+
+        document.getElementById("addressForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let addressData = {
+                userId: userId,
+                fullName: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                mobileNo: document.getElementById("mobile").value.trim(),
+                flatNo: document.getElementById("flat").value.trim(),
+                streetName: document.getElementById("street").value.trim(),
+                city: document.getElementById("city").value.trim(),
+                state: document.getElementById("state").value,
+                pincode: document.getElementById("pincode").value.trim(),
+            };
+
+            fetch(`${API_BASE_URL}/save`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(addressData)
+            })
+            .then(response => response.json())
+            
+            .then(data => {
+                showToast("Address Added Successfully", true);
+                setTimeout(() => {
+                    window.location.href="OrderProduct.html"
+                }, 1500);
+            })
+            .catch(error => console.error("Error saving address:", error));
+        });
+    </script>
+        <div id="4" class="AddFooter"></div>
+        <script>
+            load("footer.html");
+            function load(url)
+            {
+                req = new XMLHttpRequest();
+                req.open("GET", url, false);
+                req.send(null);
+                document.getElementById(4).innerHTML = req.responseText;
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeLane||Add Product</title>
+    <link rel="icon" href="./assets/images/logo.png"  type="image/png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: rgb(1,179,179);
+            background: radial-gradient(circle, rgba(1,179,179,1) 18%, rgba(3,122,122,1) 56%, rgba(2,54,54,1) 100%);        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+        }
+        #formHead{
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 95%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        select{
+            width: 98%;
+
+        }
+
+        .preview-container,
+        .photo-preview-container {
+            margin-top: 10px;
+        }
+
+        .preview,
+        .photo-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview div,
+        .photo-preview div {
+            position: relative;
+            display: inline-block;
+        }
+
+        .preview img,
+        .photo-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .remove-btn {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 50%;
+        }
+
+        button {
+            background-color: rgb(3, 122, 122);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: rgb(2, 68, 68);
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin: auto;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 16px;
+            position: fixed;
+            top: 30px;
+            right: -20px;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            font-size: 16px;
+            z-index: 1;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {
+                top: 0;
+                opacity: 0;
+            }
+            to {
+                top: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                top: 30px;
+                opacity: 1;
+            }
+            to {
+                top: 0;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <form id="productForm">
+        <h2 id="formHead">Add Product</h2>
+        <label>Brand:</label>
+        <input type="text" id="brand" required>
+
+        <label>Description:</label>
+        <textarea id="description" required></textarea>
+
+        <label>Category:</label>
+        <select id="category" required>
+            <option value="Shoes">Shoes</option>
+            <option value="Watches">Watches</option>
+            <option value="HandBags">HandBags</option>
+        </select>
+
+        <label>Name:</label>
+        <input type="text" id="name" required>
+
+        <label>Preview Image:</label>
+        <input type="file" id="preview" accept="image/*" required>
+        <div class="preview-container">
+            <div class="preview" id="previewImage"></div>
+        </div>
+
+        <label>Price:</label>
+        <input type="number" id="price" required>
+
+        <label>Photos:</label>
+        <input type="file" id="photos" multiple accept="image/*">
+        <div class="photo-preview-container">
+            <div class="photo-preview" id="photoPreview"></div>
+        </div>
+
+        <button type="button" onclick="addProduct()">Add Product</button>
+    </form>
+    <div id="toast" class="toast"></div>
+
+    <script>
+         function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.style.backgroundColor = isSuccess ? "green" : "red";
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+        document.getElementById('preview').addEventListener('change', function (event) {
+            const previewContainer = document.getElementById('previewImage');
+            previewContainer.innerHTML = "";
+            if (event.target.files.length > 0) {
+                const file = event.target.files[0];
+                const div = document.createElement('div');
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                const btn = document.createElement('button');
+                btn.textContent = "X";
+                btn.className = "remove-btn";
+                btn.onclick = () => {
+                    previewContainer.innerHTML = "";
+                    event.target.value = "";
+                };
+                div.appendChild(img);
+                div.appendChild(btn);
+                previewContainer.appendChild(div);
+            }
+        });
+
+        document.getElementById('photos').addEventListener('change', function (event) {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = "";
+            Array.from(event.target.files).forEach((file) => {
+                const div = document.createElement('div');
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                const btn = document.createElement('button');
+                btn.textContent = "X";
+                btn.className = "remove-btn";
+                btn.onclick = () => div.remove();
+                div.appendChild(img);
+                div.appendChild(btn);
+                preview.appendChild(div);
+            });
+        });
+
+        function addProduct() {
+            const formData = new FormData();
+
+            // Get text fields
+            formData.append("brand", document.getElementById("brand").value);
+            formData.append("description", document.getElementById("description").value);
+            formData.append("category", document.getElementById("category").value);
+            formData.append("name", document.getElementById("name").value);
+            formData.append("price", document.getElementById("price").value);
+
+            // Get preview image
+            const previewFile = document.getElementById("preview").files[0];
+            if (previewFile) {
+                formData.append("preview", previewFile);
+            }
+
+            // Get multiple photos
+            const photosInput = document.getElementById("photos");
+            for (let i = 0; i < photosInput.files.length; i++) {
+                formData.append("photos", photosInput.files[i]);
+            }
+            console.log(formData);
+            
+
+            fetch("http://localhost:8080/products/add", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();  // Handle empty response properly
+            })
+            .then(text => text ? JSON.parse(text) : {})
+            .then(data => {
+                showToast("Product added successfully!", true);
+                setTimeout(() => {
+                    window.location.href="ProductList.html";
+
+                }, 1500);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showToast("Failed to add product!", false);
+            });
+
+        }
+
+    </script>
+</body>
+
+</html>
